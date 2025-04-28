@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Voyageurs</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        @page {
+            size: A4 landscape;
+            margin:2mm;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            /* border-bottom: #333 solid 1px; */
+        }
+
+        .voyage-description {
+            max-width: 80%;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: 50px;
+        }
+        table,th,td {
+            font-size: 9px;
+            padding: 2px !important;
+        }
+        p{
+            font-size: 8px !important;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        i{
+            font-style: italic !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-1">
+    <div class="text-center text-uppercase h5 mb-3" style="font-family: serif; font-weight: 580; letter-spacing: 2px; font-weight: 500 !important;">Manifold fasan-karana zotra rezionaly</div>
+    <div class="header container px-5">
+
+        <div class="logo px-2" style="margin-left: -50px !important;">
+            <img src="{{ url_for('static', filename='images/images.png') }}" alt="Logo" style="height: 85px !important;margin-top: -25px !important;">
+        </div>
+        <div class="voyage-description d-flex gap-4 w-100">
+            <div>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">FIARA N° : &nbsp;</i> {{ voyage.numero_automobile }}</p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Koperativa : &nbsp;</i> {{ voyage.cooperative }}</p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Mpamily : &nbsp;</i> {{ voyage.chauffeur }}</p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Tel : &nbsp;</i> {{ chauffeur_telephone }}</p>
+            </div>
+            <div>
+                <p class="mb-1 d-flex">
+                    <i class="text-uppercase fst-italic">Daty : &nbsp;</i> 
+                    <!-- <span id="date-depart" data-date="{{ voyage.date_depart }}"></span> -->
+                    <span>{{ date_depart_fr }}</span>
+                </p>
+
+                <!-- <script>
+                    const dateElement = document.getElementById("date-depart");
+                    if (dateElement) {
+                      const rawDate = dateElement.textContent.trim(); // Ex: "2025-04-09T08:07"
+                      const dateObj = new Date(rawDate);
+                      
+                      // Format : 09 - 04 - 2025
+                      const formattedDate = dateObj.toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      });
+                  
+                      dateElement.textContent = formattedDate;
+                    }
+                </script> -->
+                <p class="mb-1 d-flex"><i class="text-light" style="color: white !important;">hello</i></p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Isan'ny mpandeha : &nbsp;</i> {{ voyage.nombre_voyageurs }}</p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Ora fiaingàna : &nbsp;</i></p>
+            </div>
+            <div>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Toerana iaingàna : &nbsp;</i> {{ voyage.lieu_depart }}</p>
+                <p class="mb-1 d-flex"><i class="text-uppercase fst-italic">Toerana Aleha : &nbsp;</i> {{ voyage.destination }}</p>
+            </div>
+        </div>
+        <div class="d-flex gap-4">
+            <div style="display: flex ; flex-direction: column !important; justify-content: center !important; align-items: center !important; margin-top: -35px;">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" style="height: 40px !important;">
+                </div>
+                <p style="font-size: 4px !important; width: 100px !important; display: flex;">AGENCE DES TRANSPORTS TERRESTRES</p>
+            </div>
+            <div>
+                <p style="
+                    margin-top: -40px;
+                    font-size: 40px !important;
+                    font-family: 'Times New Roman', Times, serif;
+                    font-weight: bold;
+                    background-color: #333;
+                    color: #f8f9fa !important;
+                    padding-top: 10px;
+                    padding-left: 30px;
+                    padding-right: 30px;
+                    "
+                >RN7</p>
+                <p style="margin-top: -12px;" class="">Lot III 2 CG Iadiambola Ampasampito <br> Antananarivo 101 <br> Tél : 261 20 26213 44, 034 126 80 09</p>
+
+            </div>
+
+        </div>
+    </div>
+   
+    <table class="table table-bordered table-striped text-center border-inherit" style="margin-top: -19px;">
+        <thead class="text-center">
+            <tr>
+                <td>N°</td>
+                <td>ANARANA SY FANAMPINY</td>
+                <td>L <br> V</td>
+                <td>CIN</td>
+                <td>TEL <br> MPANDEHA</td>
+                <td>TEL <br> FIANANKAVIANA</td>
+                <td>ADIRESY <br>NIAINGANA</td>
+                <td>ADIRESY <br> IVANTANANA</td>
+                <td>T</td>
+                <!-- <th>SARANDALANA</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in voyageurs %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ v.nom }}</td>
+                <td>{{ v.sexe }}</td>
+                <td>{{ v.cin }}</td>
+                <td>{{ v.tel_perso }}</td>
+                <td>{{ v.tel_famille }}</td>
+                <td>{{ v.adresse_depart }}</td>
+                <td>{{ v.destination }}</td>
+                <td>{{ v.temperature }}</td>
+                <!-- <td>{{ v.status }}</td> -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+        
+
+</div>
+<div style="display: flex !important; width: 100% !important; justify-content: space-between;" class="px-5 text-center">
+    <div>
+        <p class="mb-1 d-flex"><i class="text-uppercase" style="border-bottom: #333 solid 1px;">Guichetier</i>&nbsp; : {{ voyage.guichetier }}</p>
+    </div>
+    <div>
+        <p class="mb-1 d-flex"><i class="text-uppercase" style="border-bottom: #333 solid 1px;">Mpamily</i>&nbsp;  : {{ voyage.chauffeur }}</p>
+    </div>  
+    <div>
+        <p class="mb-1 d-flex"><i class="text-uppercase" style="border-bottom: #333 solid 1px;">Tompon'Andraikitry ny Gare Routiere</i>&nbsp;  : <br></p>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"> </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateElement = document.getElementById("date-depart");
+        if (dateElement) {
+        const rawDate = dateElement.dataset.date; // récupère depuis l'attribut data-date
+        const dateObj = new Date(rawDate);
+
+        if (!isNaN(dateObj.getTime())) {
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+
+            const formattedDate = `${day} - ${month} - ${year}`;
+            dateElement.textContent = formattedDate;
+        } else {
+            console.error("Date invalide :", rawDate);
+            dateElement.textContent = rawDate; // fallback si erreur
+        }
+        }
+    });
+    </script>
+
+</body>
+</html>

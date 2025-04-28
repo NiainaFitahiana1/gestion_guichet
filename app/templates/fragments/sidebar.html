@@ -1,0 +1,33 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="height: 100vh; width: 250px;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <span class="fs-4">AdminPanel</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('dashboard.profile') }}" class="nav-link {% if request.endpoint == 'dashboard.profile' %}active{% endif %}">
+                Profil
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('auth_bp.list_users') }}" class="nav-link {% if request.endpoint == 'auth_bp.list_users' %}active{% endif %}">
+                Utilisateurs
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('auth_bp.add_user') }}" class="nav-link {% if request.endpoint == 'auth_bp.add_user' %}active{% endif %}">
+                Ajouter Utilisateur
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('auth_bp.logout') }}" class="nav-link text-danger">
+                Déconnexion
+            </a>
+        </li>
+    </ul>
+</div>

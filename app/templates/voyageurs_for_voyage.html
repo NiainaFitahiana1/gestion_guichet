@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <p class="mb-4 h5">Voyageurs du voyage {{ voyage.lieu_depart }} à {{ voyage.destination }} le <span class="text-danger">{{voyage.date_depart}}</span></p>
+
+        {% if voyageurs %}
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">CIN</th>
+                        <th scope="col">Sexe</th>
+                        <th scope="col">Téléphone (Famille)</th>
+                        <th scope="col">Téléphone (Perso)</th>
+                        <th scope="col">Adresse de départ</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Température</th>
+                        <th scope="col">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voyageur in voyageurs %}
+                        <tr>
+                            <td>{{ voyageur.nom }}</td>
+                            <td>{{ voyageur.cin }}</td>
+                            <td>{{ voyageur.sexe }}</td>
+                            <td>{{ voyageur.tel_famille }}</td>
+                            <td>{{ voyageur.tel_perso }}</td>
+                            <td>{{ voyageur.adresse_depart }}</td>
+                            <td>{{ voyageur.destination }}</td>
+                            <td>{{ voyageur.temperature }}</td>
+                            <td>{{ voyageur.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Aucun voyageur trouvé pour ce voyage.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

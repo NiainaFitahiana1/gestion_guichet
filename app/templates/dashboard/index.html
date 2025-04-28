@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    {% if current_user.role == "superadmin" %}
+    <div class="row">
+        <h3 class="mb-4">Bienvenue, <span class="text-primary">{{ current_user.nom }}</span></h3>
+        
+        <div class="col-md-12">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <canvas id="voyageChart" height="200"></canvas>
+                </div>
+            </div>
+            <script>
+              const chartData = {{ chart_data | tojson }};
+              
+              const config = {
+                  type: 'line',
+                  data: chartData,
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          title: {
+                              display: true,
+                              text: 'Nombre total de voyages par jour'
+                          },
+                          legend: {
+                              position: 'top'
+                          }
+                      },
+                      scales: {
+                          y: {
+                              beginAtZero: true
+                          }
+                      }
+                  }
+              };
+          
+              new Chart(document.getElementById('voyageChart'), config);
+          </script>
+            <hr>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p>Total utilisateurs : <strong>{{ users_count }}</strong></p>
+                    <span class="text-danger" style="font-size: small;">Guichetiers : {{ guichetier_count }}</span><br>
+                    <span class="text-danger" style="font-size: small;">Chauffeurs : {{ chauffeur_count }}</span><br><br>
+                    <a href="{{ url_for('auth_bp.list_users') }}" class="btn btn-secondary">Gestion des utilisateurs</a>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p>Total des clients : <strong>{{ client_count }}</strong></p>
+                    <a href="{{ url_for('dashboard.list_clients') }}" class="btn btn-secondary">Voir la liste avec activités</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-danger mt-3" role="alert">
+        Accès non autorisé.
+    </div>
+    {% endif %}
+{% endblock %}

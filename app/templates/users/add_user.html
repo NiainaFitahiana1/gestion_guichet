@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100 ">
+    <div class="container p-4 shadow-lg  my-5">
+        <form action="{{ url_for('auth_bp.add_user') }}" method="post" class="row">
+            <div class="col-md-12">
+                <p class="text-uppercase mb-2 h5" style="font-weight: 600;">Ajouter un utilisateur</p>
+            </div>
+            <hr>
+            <div class="mb-3 col-md-4">
+                <label for="nom" class="form-label">Nom</label>
+                <input type="text" class="form-control" id="nom" name="nom" required>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="telephone" class="form-label">Numéro de téléphone</label>
+                <input type="text" class="form-control" id="telephone" name="telephone" required>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="adresse" class="form-label">Adresse</label>
+                <input type="text" class="form-control" id="adresse" name="adresse" required>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="role" class="form-label">Rôle</label>
+                <select class="form-control" id="role" name="role" required>
+                    <option value="user">Utilisateur</option>
+                    <option value="admin">Administrateur</option>
+                    <option value="superadmin">Super Administrateur</option>
+                </select>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="date_naissance" class="form-label">Date de naissance</label>
+                <input type="date" class="form-control" id="date_naissance" name="date_naissance" required>
+            </div>
+
+            <div class="mb-3 col-md-4">
+                <label for="photo" class="form-label">Photo (optionnel)</label>
+                <input type="file" class="form-control" id="photo" name="photo">
+            </div>
+            <hr>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-outline-dark py-2 px-5">Ajouter l'utilisateur</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bg-primary {
+        background-color: #111827 !important;
+    }
+
+    input {
+        border-radius: 0px !important;
+        border: 1px solid #ccc; /* ajout d'une bordure par défaut */
+        padding: 0.375rem 0.75rem; /* meilleur rendu visuel */
+        outline: none; /* enlève la bordure bleue par défaut sur focus */
+    }
+
+    input:focus {
+        border: 1px solid #f8f8f8 !important; /* couleur de bordure sur focus */
+        box-shadow: 0 0 0 0.2rem rgba(248, 248, 248, 0.25); /* effet visuel en focus */
+        background-color: #1f2937; /* optionnel : changement de fond au focus */
+        color: #fff; /* texte plus visible si fond foncé */
+    }
+
+</style>
+
+<div class="container" style="margin-bottom: 500px !important;">
+    <h5 class="px-4">Manifolds {{ selected_day }}</h5>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="">
+                <tr>
+                    <th>#</th>
+                    <th>Fotoana</th>
+                    <th>Toerana aleha</th>
+                    <th>Koperativa</th>
+                    <th>Mpamily</th>
+                    <th>Isan'ny mpandeha</th>
+                    <th>Sarandalana</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voyage in voyages %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td class="date-voyage" data-date="{{ voyage.date_depart }}"></td>
+                        <script>
+                            function formatDateFr(dateString) {
+                              const date = new Date(dateString);
+                          
+                              const jours = ["Alahady", "Alatsinainy", "Talata", "Alarobia", "Alakamisy", "Zoma", "Sabotsy"];
+                              const mois = [
+                                "Janoary", "Febroary", "Martsa", "Aprily", "May", "Jona",
+                                "Jolay", "Aogositra", "Septambra", "Oktobra", "Novambra", "Desambra"
+                              ];
+                          
+                              const jour = jours[date.getDay()];
+                              const jourNum = String(date.getDate()).padStart(2, "0");
+                              const moisNom = mois[date.getMonth()];
+                              const annee = date.getFullYear();
+                              const heure = String(date.getHours()).padStart(2, "0");
+                              const minutes = String(date.getMinutes()).padStart(2, "0");
+                          
+                              return `${jour} ${jourNum} ${moisNom} ${annee} -->  ${heure}h:${minutes}`;
+                            }
+                          
+                            document.querySelectorAll(".date-voyage").forEach(el => {
+                              const rawDate = el.dataset.date;
+                              el.textContent = formatDateFr(rawDate);
+                            });
+                        </script>
+                        <td class="text-uppercase fw-bold" style="font-size: medium !important;">{{ voyage.destination }}</td>
+                        <td>{{ voyage.cooperative }}</td>
+                        <td>{{ voyage.chauffeur }}</td>
+                        <td><span class="text-primary">{{ voyage.nombre_voyageurs}}</span> / {{ voyage.total }}</td>
+                        <td>{{ voyage.frais }} <span class="text-danger"> MGA</span></td>
+                        <td>
+                                {% if voyage.statut_voyage == "termine" %}
+                                    <a href="{{ url_for('voyageur_bp.list_voyageurs', voyage_id=voyage.id) }}" class="btn btn-info btn-sm mb-1">LISITRY NY MPANDEHA</a>
+                                {% elif voyage.statut_voyage == "mameno" %}
+                                    <!-- Bouton ouvrir modal -->
+                                    <a href="{{ url_for('voyageur_bp.list_voyageurs', voyage_id=voyage.id) }}" class="btn btn-primary btn-sm mb-1">Mpandeha</a>
+                                    <button type="button" class="btn btn-outline-info btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#editVoyageModal-{{ voyage.id }}">
+                                        Hanova
+                                    </button>
+                            
+                                    <!-- Modal modification voyage -->
+                                    <div class="modal fade" id="editVoyageModal-{{ voyage.id }}" tabindex="-1" aria-labelledby="editVoyageLabel-{{ voyage.id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl">
+                                            <div class="modal-content" style="border-radius: 0px !important;">
+                                                <form action="{{ url_for('voyage_bp.edit_voyage', id=voyage.id) }}" method="post">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editVoyageLabel-{{ voyage.id }}">Fanovàna</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row g-3">
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">Fiara N°</label>
+                                                                <input type="text" name="numero_automobile" class="form-control" value="{{ voyage.numero_automobile }}">
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">KOPERATIVA</label>
+                                                                <input type="text" name="cooperative" class="form-control" value="{{ voyage.cooperative }}">
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">TOERANA ALEHA</label>
+                                                                <input type="text" name="destination" class="form-control" value="{{ voyage.destination }}">
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">isan'ny toreana</label>
+                                                                <input type="text" name="total" class="form-control" value="{{ voyage.total }}">
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">mpamily</label>
+                                                                <input type="text" name="chauffeur" class="form-control" value="{{ voyage.chauffeur }}">
+                                                            </div>
+                                                            <div class="col-6 col-md-3">
+                                                                <label class="form-label text-dark text-uppercase">Sarandalana</label>
+                                                                <input type="number" name="frais" class="form-control" value="{{ voyage.frais }}">
+                                                            </div>
+                                                            <input type="hidden" value="{{ voyage.lieu_depart }}" name="lieu_depart">
+                                                            <input type="hidden" value="{{ voyage.date_depart }}" name="date_depart">
+                                                            <input type="hidden" value="{{ voyage.date_arrive }}" name="date_arrive">
+                                                            <input type="hidden" value="{{ voyage.statut_voyage }}" name="statut_voyage">
+                                                            <input type="hidden" value="{{ voyage.nombre_voyageurs }}" name="nombre_voyageurs">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer mt-4">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Supprimer -->
+                                    <form action="{{ url_for('voyage_bp.delete_voyage', id=voyage.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm mb-1">Hamafa</button>
+                                    </form>
+                                    <form action="{{ url_for('voyage_bp.change_status', id=voyage.id) }}" method="POST" style="display: inline;">
+                                        <input type="hidden" name="statut_voyage" value="termine">
+                                        <button type="submit" class="btn btn-sm btn-warning">HITAHIRY</button>
+                                    </form> 
+                                    <div
+                                        class="modal fade"
+                                        id="exampleModalToggle"
+                                        aria-hidden="true"
+                                        aria-labelledby="exampleModalToggleLabel"
+                                        tabindex="-1"
+                                    >
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content rounded-0">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalToggleLabel">
+                                                        Tandremo ! 
+                                                    </h5>
+                                                    
+                                                </div>
+                                                <div class="modal-body">
+                                                    <span class="text-muted">
+                                                        Aorian'ito dia tsy azonao ovaina na fafàna intsony ito.
+                                                    </span>
+                                                </div>
+                                                <div class="modal-footer" style="justify-content: start;">
+                                                    <form action="{{ url_for('voyage_bp.change_status',id=voyage.id) }}" method="POST" style="display: inline;">
+                                                        <input type="hidden" name="statut_voyage" value="termine">
+                                                        <button type="submit" class="btn btn-sm btn-warning">HITAHIRY</button>
+                                                    </form> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a
+                                        class="btn btn-outline-dark"
+                                        data-bs-toggle="modal"
+                                        href="#exampleModalToggle"
+                                        role="button"
+                                        >Hotahirizina</a
+                                    >
+                                    
+                                {% endif %}
+                            <!-- <a href="{{ url_for('voyageur_bp.export_voyageurs_pdf', voyage_id=voyage.id) }}" class="btn btn-outline-dark">Impression {{ voyage.nombre_voyageurs }} / <span class="text-light">{{ voyage.total }}</span></a> -->
+                        </td>                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Navigation pagination" class="mt-4">
+        <ul class="pagination justify-content-center flex-wrap">
+      
+          {% if page > 1 %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('voyage_bp.list_voyages', page=page-1) }}" aria-label="Précédent">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="d-none d-sm-inline">Vaovao</span>
+              </a>
+            </li>
+          {% endif %}
+      
+          {% for p in range(1, total_pages + 1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+              <a class="page-link" href="{{ url_for('voyage_bp.list_voyages', page=p) }}">{{ p }}</a>
+            </li>
+          {% endfor %}
+      
+          {% if page < total_pages %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('voyage_bp.list_voyages', page=page+1) }}" aria-label="Suivant">
+                <span class="d-none d-sm-inline">Tranainy</span>
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {% endif %}
+      
+        </ul>
+      </nav>
+      
+      
+</div>
+
+<nav class="navbar navbar-dark bg-primary fixed-bottom">
+    <div class="container">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color: white; color: black !important; border: 2px solid #111827; border-radius: 0.5rem; padding: 10px 20px; font-size: 1rem; font-weight: 500; text-transform: uppercase; transition: all 0.3s ease; box-shadow: none !important; left: 0; transform: translateY(-50%); width: 150px !important;">
+            Formulaire
+        </button>
+        <div class="btn-group dropup">
+            <button type="button" class="btn btn-outline-light"><span class="text-capitalise">{{ nommer.role}}</span> :  {{ nommer.nom }}</button>
+            <button
+            type="button"
+            class="btn btn-light dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+        >
+            <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu p-3 text-center" style="border-radius: 0px !important; width: 200px !important;">
+            <span class="fw-bold h6">{{ nommer.nom }}</span> <br>
+            <div class="dropdown-divider"></div>
+            <span style="font-size: small !important;">ADIRESY: <span class="fw-medium">{{nommer.adresse}}</span> </span>
+            <div class="dropdown-divider"></div>
+            <span style="font-size: small !important;">TEL: <span class="fw-medium">{{ nommer.telephone }}</span></span>
+            <div class="dropdown-divider"></div>
+            <a href="{{ url_for('auth_bp.logout') }}" class="btn btn-outline-danger w-100">Hivoaka</a>
+        </div>
+    </div>
+    </div>
+    <div class="container">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item" style="background-color: rgba(255, 0, 0, 0) !important; border: none !important;">
+                <h2 class="accordion-header" id="headingOne">
+                    <div></div>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
+                    <form action="{{ url_for('voyage_bp.create_voyage') }}" method="POST" class="row">
+                        <style>
+                            label{
+                                color: white !important;
+                            }
+                        </style>
+                            <div class="col-4 col-md-4 position-relative">
+                                <div class="form-group">
+                                    <label for="numero_automobile" class="form-label">FIARA N°</label>
+                                    <input type="text" class="form-control" id="numero_automobile" name="numero_automobile" required autocomplete="off">
+                                    <div id="immatriculation_suggestions" class="list-group rounded-0 position-absolute" style="z-index:1000;"></div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="date_depart" class="form-label">DATY</label>
+                                    <input type="datetime-local" class="form-control" id="date_depart" name="date_depart" required>
+                                </div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        let dateInput = document.getElementById("date_depart");
+                                        let now = new Date();
+                                        let formattedDate = now.toISOString().slice(0, 16);
+                                        dateInput.value = formattedDate;
+                                    });
+                                </script>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="lieu_depart" class="form-label">TOERANA IAINGANA</label>
+                                    <input type="text" class="form-control" id="lieu_depart" value="Fasan'ny Karana" name="lieu_depart" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="cooperative" class="form-label">KOPERATIVA</label>
+                                    <input type="text" class="form-control" id="cooperative" name="cooperative" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="destination" class="form-label">TOERANA ALEHA</label>
+                                    <input type="text" class="form-control" id="destination" name="destination" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="chauffeur" class="form-label">MPAMILY</label>
+                                    <input type="text" class="form-control" id="chauffeur" name="chauffeur" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="total" class="form-label">MPANDEHA ZAKAN'NY FIARA</label>
+                                    <input type="number" class="form-control" id="total" name="total" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                
+                            </div>
+                            <div class="col-4 col-md-4" style="position: inherit;">
+                                <div class="form-group">
+                                    <label for="guichetier" class="form-label text-uppercase">Guichetier</label>
+                                    <input type="text" class="form-control" id="guichetier" name="guichetier" value="{{ nommer.nom }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="frais" class="form-label">Frais (MGA)</label>
+                                    <input type="number" class="form-control" id="frais" name="frais" required>
+                                </div>
+                            </div>
+                        <div class="form-group text-start my-3">
+                            <button type="submit" class="btn btn-outline-light fw-bold py-2 px-5 text-uppercase">Hampiditra Voyage</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}

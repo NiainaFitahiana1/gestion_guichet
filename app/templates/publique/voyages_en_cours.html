@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Voyages en cours{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">🚍 Voyages en cours</h2>
+
+    {% if voyages %}
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for voyage in voyages %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ voyage.lieu_depart }} ➜ {{ voyage.destination }}</h5>
+                        <p class="card-text">
+                            Date départ : {{ voyage.date_depart.strftime('%d/%m/%Y %H:%M') if voyage.date_depart else 'N/A' }}<br>
+                            Date arrivée : {{ voyage.date_arrivee.strftime('%d/%m/%Y %H:%M') if voyage.date_arrivee else 'N/A' }}<br>
+                            Coopérative : {{ voyage.cooperative }}<br>
+                            Chauffeur : {{ voyage.chauffeur }}<br>
+                            Numéro voiture : {{ voyage.numero_automobile }}<br>
+                            Frais : {{ voyage.frais }} Ar<br>
+                            Places restantes : {{ voyage.places_restantes if voyage.places_restantes is not none else 'Inconnue' }}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            Aucun voyage en cours pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card rounded-0 p-3">
+        <div class="card-body">
+            <p class="card-title text-start text-uppercase  h5" style="font-weight: 700;">Modifier </p>
+            <hr>
+            <form action="{{ url_for('voyage_bp.edit_voyage', id=voyage.id) }}" method="POST">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-{{ messages[0][0] }}" role="alert">
+                            {{ messages[0][1] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lieu_depart" class="form-label">Lieu de départ</label>
+                            <input type="text" class="form-control" id="lieu_depart" name="lieu_depart" value="{{ voyage.lieu_depart }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="destination" class="form-label">Destination</label>
+                            <input type="text" class="form-control" id="destination" name="destination" value="{{ voyage.destination }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="cooperative" class="form-label">Coopérative</label>
+                            <input type="text" class="form-control" id="cooperative" name="cooperative" value="{{ voyage.cooperative }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="chauffeur" class="form-label">Chauffeur</label>
+                            <input type="text" class="form-control" id="chauffeur" name="chauffeur" value="{{ voyage.chauffeur }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total" class="form-label">Voyageurs Maximum</label>
+                            <input type="number" class="form-control" id="total" name="total" value="{{ voyage.total }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="numero_automobile" class="form-label">Numéro d'Automobile</label>
+                            <input type="text" class="form-control" id="numero_automobile" name="numero_automobile" value="{{ voyage.numero_automobile }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="guichetier" class="form-label">Guichetier</label>
+                            <input type="text" class="form-control" id="guichetier" name="guichetier" value="{{ voyage.guichetier }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="frais" class="form-label">Frais (MGA)</label>
+                            <input type="number" class="form-control" id="frais" name="frais" value="{{ voyage.frais }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date_depart" class="form-label">Date de départ</label>
+                            <input type="datetime-local" class="form-control" id="date_depart" name="date_depart" value="{{ voyage.date_depart }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date_arrivee" class="form-label">Date d'arrivée</label>
+                            <input type="datetime-local" class="form-control" id="date_arrivee" name="date_arrivee" value="{{ voyage.date_arrivee }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="statut_voyage" class="form-label">Statut du voyage</label>
+                            <select class="form-control" id="statut_voyage" name="statut_voyage" required>
+                                <option value="encours" {% if voyage.statut_voyage == "En cours" %} selected {% endif %}>En cours</option>
+                                <option value="termine" {% if voyage.statut_voyage == "Terminé" %} selected {% endif %}>Terminé</option>
+                                <option value="Annulé" {% if voyage.statut_voyage == "Annulé" %} selected {% endif %}>Annulé</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nombre_voyageurs" class="form-label">Nombre de voyageurs</label>
+                            <input type="number" class="form-control" id="nombre_voyageurs" name="nombre_voyageurs" value="{{ voyage.nombre_voyageurs }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group text-start">
+                    <button type="submit" class="btn btn-outline-dark py-2">Mettre à jour le Voyage</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

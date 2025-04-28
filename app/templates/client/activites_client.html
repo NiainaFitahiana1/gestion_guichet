@@ -1,0 +1,63 @@
+<!-- templates/dashboard/activites_client.html -->
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="my-3">
+        <ol class="breadcrumb bg-light p-2 shadow-sm">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="#">Voyageurs enregistrés</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Activités</li>
+        </ol>
+    </nav>
+
+    <!-- Page Title -->
+    <div class="my-4">
+        <h3>Activités de {{ client.nom }} <small class="text-muted">(CIN : {{ client.cin }})</small></h3>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="mb-4 p-3 bg-white shadow-sm">
+        <h5 class="mb-3">Informations personnelles</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Sexe :</strong> {{ client.sexe }}</li>
+            <li class="list-group-item"><strong>Téléphone :</strong> {{ client.tel_perso }}</li>
+        </ul>
+    </div>
+
+    <!-- Historique des voyages -->
+    <div class="mb-4 p-3 bg-white shadow-sm">
+        <h5 class="mb-3">Historique des voyages</h5>
+
+        {% if voyages %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Départ</th>
+                        <th>Destination</th>
+                        <th>Date Départ</th>
+                        <th>Date Arrivée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voyage in voyages %}
+                    <tr>
+                        <td>{{ voyage.lieu_depart }}</td>
+                        <td>{{ voyage.destination }}</td>
+                        <td>{{ voyage.date_depart }}</td>
+                        <td>{{ voyage.date_arrivee }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">Aucun voyage trouvé pour ce client.</div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

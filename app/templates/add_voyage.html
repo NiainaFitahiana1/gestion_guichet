@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border rounded-0 p-3">
+        <div class="card-body">
+            <p class="card-title text-start text-uppercase  h5" style="font-weight: 700;">Ajouter un Voyage</p>
+            <hr>
+            <form action="{{ url_for('voyage_bp.create_voyage') }}" method="POST">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-{{ messages[0][0] }}" role="alert">
+                            {{ messages[0][1] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lieu_depart" class="form-label">Lieu de départ</label>
+                            <input type="text" class="form-control" id="lieu_depart" value="Fasan'ny Karana" name="lieu_depart" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="destination" class="form-label">Destination</label>
+                            <input type="text" class="form-control" id="destination" name="destination" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="cooperative" class="form-label">Coopérative</label>
+                            <input type="text" class="form-control" id="cooperative" name="cooperative" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="chauffeur" class="form-label">Chauffeur</label>
+                            <input type="text" class="form-control" id="chauffeur" name="chauffeur" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total" class="form-label">Voyageur maximale</label>
+                            <input type="number" class="form-control" id="total" name="total" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="numero_automobile" class="form-label">Numéro d'Automobile</label>
+                            <input type="text" class="form-control" id="numero_automobile" name="numero_automobile" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="guichetier" class="form-label">Guichetier</label>
+                            <input type="text" class="form-control" id="guichetier" name="guichetier" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="frais" class="form-label">Frais (MGA)</label>
+                            <input type="number" class="form-control" id="frais" name="frais" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date_depart" class="form-label">Date de départ</label>
+                            <input type="datetime-local" class="form-control" id="date_depart" name="date_depart" required>
+                        </div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                // Sélectionne l'élément input
+                                let dateInput = document.getElementById("date_depart");
+                        
+                                // Crée un objet Date pour obtenir la date et l'heure actuelles
+                                let now = new Date();
+                        
+                                // Formatage en "YYYY-MM-DDTHH:MM" (format requis par datetime-local)
+                                let formattedDate = now.toISOString().slice(0, 16);
+                        
+                                // Assigne la valeur à l'input
+                                dateInput.value = formattedDate;
+                            });
+                        </script>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="statut_voyage" class="form-label">Statut du voyage</label>
+                            <select class="form-control" id="statut_voyage" name="statut_voyage">
+                                <option value="En cours">En cours</option>
+                                <option value="Terminé">Terminé</option>
+                                <option value="Annulé">Annulé</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nombre_voyageurs" class="form-label">Nombre de voyageurs</label>
+                            <input type="number" class="form-control" id="nombre_voyageurs" name="nombre_voyageurs">
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="form-group text-start">
+                    <button type="submit" class="btn btn-outline-dark py-2">Ajouter le Voyage</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

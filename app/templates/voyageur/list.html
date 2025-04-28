@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Voyageurs{% endblock %}
+
+{% block content %}
+<style>
+    body{
+        background-color: #111827;
+        height: 100%;
+        width: 100%;
+        color: white !important;
+    }
+</style>
+<div class="container my-5">
+    <div class="fixed-top p-3 container">
+        <a href="{{url_for('voyage_bp.dynamic_add') }}" class="btn btn-outline-warning" style="margin-left: -100px;">Retour</a>
+    </div>
+    <div class="table-responsive mb-5 pb-5 ">
+        <table class="table table-striped table-striped-light text-light">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ANARANA SY FANAMPINY</th>
+                    <th>L&V</th>
+                    <th>CIN</th>
+                    <th>TEL MPANDEHA</th>
+                    <th>TEL FIANANKAVIANA</th>
+                    <th>ADIRESY NIAINGÀNA</th>
+                    <th>ADIRESY IVANTANANA</th>
+                    <th>T</th>
+                    <th>SARANDALANA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voyageur in voyageurs %}
+                    <tr class="table-dark">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ voyageur.nom }}</td>
+                        <td>{{ voyageur.sexe }}</td>
+                        <td>{{ voyageur.cin }}</td>
+                        <td>{{ voyageur.tel_perso }}</td>
+                        <td>{{ voyageur.tel_famille }}</td>
+                        <td>{{ voyageur.adresse_depart }}</td>
+                        <td>{{ voyageur.destination }}</td>
+                        <td>{{ voyageur.temperature }}°C</td>
+                        <td>{{ voyageur.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Voyageurs{% endblock %}
+
+{% block content %}
+
+    <style>
+        .bg-primary {
+            background-color: #111827 !important;
+        }
+
+        input ,select{
+            border-radius: 0px !important;
+            border: 1px solid #ccc; /* ajout d'une bordure par défaut */
+            padding: 0.375rem 0.75rem; /* meilleur rendu visuel */
+            outline: none; /* enlève la bordure bleue par défaut sur focus */
+        }
+
+        input:focus {
+            border: 1px solid #f8f8f8 !important; /* couleur de bordure sur focus */
+            box-shadow: 0 0 0 0.2rem rgba(248, 248, 248, 0.25); /* effet visuel en focus */
+            background-color: #1f2937; /* optionnel : changement de fond au focus */
+            color: #fff; /* texte plus visible si fond foncé */
+        }
+
+    </style>
+
+    <div class="fixed-top p-3 bg-primary">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="{{url_for('voyage_bp.dynamic_add') }}" class="btn btn-outline-warning"> <i class="bi bi-arrow-left"></i></a>
+            <div class="text-white" style="font-size: large;">
+                    <!-- <span class="text-sm text-muted">{{ voyage.numero_automobile }}</span> | {{ voyage.cooperative }} | <span class="text-uppercase text-warning fw-bold">{{ voyage.destination}}</span> -->
+                   <div class="btn-group">
+                    <button type="button" class="btn text-white">{{voyage.cooperative}} | <span class="text-uppercase text-warning fw-bold">{{ voyage.destination }}</span> | Fiara : {{ voyage.numero_automobile }}</button>
+                    <button
+                        type="button"
+                        class="btn text-light dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                      Mombamomba
+                    </button>
+                    <div class="dropdown-menu rounded-0 bg-primary px-4" style="font-size: small;">
+                        <p class="text-light pt-3">Daty : {{ voyage.date_depart }}</p>
+                        <p class="text-light">Mpamily : {{ voyage.chauffeur }}</p>
+                        
+                    </div>
+                   </div>
+                   
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive mb-5 pb-5" style="padding-top: 50px;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ANARANA SY FANAMPINY</th>
+                    <th>L&V</th>
+                    <th>CIN</th>
+                    <th>TEL MPANDEHA</th>
+                    <th>TEL FIANANKAVIANA</th>
+                    <th>ADIRESY NIAINGÀNA</th>
+                    <th>ADIRESY IVANTANANA</th>
+                    <th>T</th>
+                    <th>SARANDALANA</th>
+                    <th>---</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voyageur in voyageurs %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ voyageur.nom }}</td>
+                        <td>{{ voyageur.sexe }}</td>
+                        <td>{{ voyageur.cin }}</td>
+                        <td>{{ voyageur.tel_perso }}</td>
+                        <td>{{ voyageur.tel_famille }}</td>
+                        <td>{{ voyageur.adresse_depart }}</td>
+                        <td>{{ voyageur.destination }}</td>
+                        <td>{{ voyageur.temperature }}°C</td>
+                        <td>{{ voyageur.status }}</td>
+                        <td>
+                            <!-- Bouton pour ouvrir le modal -->
+                            <button type="button" class="btn btn-outline-warning btn-sm mb-1" data-bs-toggle="modal" data-bs-target="#editModal-{{ voyageur._id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        
+                            <div class="modal fade" id="editModal-{{ voyageur._id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ voyageur._id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-xl" style="border-radius: 0px !important;">
+                                    <div class="modal-content text-warning bg-primary p-4" style="border-radius: 0px !important;">
+                                        <form action="{{ url_for('voyageur_bp.edit_voyageur', voyage_id=voyageur.voyage_id, voyageur_id=voyageur._id) }}" method="post">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fw-bold" id="editModalLabel-{{ voyageur._id }}">Hanova mombamomba ny mpandeha</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row g-3">
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">ANARANA SY FANAMPINY</label>
+                                                        <input type="text" name="nom" class="form-control" value="{{ voyageur.nom }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">L&V</label>
+                                                        <select name="sexe" class="form-control" required>
+                                                            <option value="{{voyageur.sexe}}">{{ voyageur.sexe }}</option>
+                                                            <option value="L">L</option>
+                                                            <option value="V">V</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">CIN</label>
+                                                        <input type="text" name="cin" class="form-control" value="{{ voyageur.cin }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">Tel mpandeha</label>
+                                                        <input type="text" name="tel_perso" class="form-control" value="{{ voyageur.tel_perso }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">Tel fianankaviana</label>
+                                                        <input type="text" name="tel_famille" class="form-control" value="{{ voyageur.tel_famille }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">Adiresy niaingàna</label>
+                                                        <input type="text" name="adresse_depart" class="form-control" value="{{ voyageur.adresse_depart }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">adiresy ivantanana</label>
+                                                        <input type="text" name="destination" class="form-control" value="{{ voyageur.destination }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">T</label>
+                                                        <input type="text" name="temperature" class="form-control" value="{{ voyageur.temperature }}">
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <label class="form-label text-white fw-bold text-uppercase">Sarandalana</label>
+                                                        <input type="text" name="status" class="form-control" value="{{ voyageur.status }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer mt-4">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">AOKA IHANY</button>
+                                                <button type="submit" class="btn btn-primary">HITAHIRY</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        
+                            <!-- Formulaire de suppression -->
+                            <form action="{{ url_for('voyageur_bp.delete_voyageur', voyage_id=voyageur.voyage_id, voyageur_id=voyageur._id) }}" method="post" class="d-inline mb-1">
+                                <button type="submit" class="btn btn-outline-dark btn-sm mb-1" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce voyageur ?');"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Formulaire d'ajout de voyageur -->
+    <nav class="navbar navbar-dark bg-primary fixed-bottom">
+        <div class="container">
+            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color: white; color: black !important; border: 4px solid #111827; border-radius: 0.5rem; padding: 10px 20px; font-size: 1rem; font-weight: 500; text-transform: uppercase; transition: all 0.3s ease; box-shadow: none !important; left: 0; transform: translateY(-50%); width: 150px !important;">
+                TAKELAKA
+            </button>
+            <div class="d-flex items-center">
+                <a href="{{ url_for('voyageur_bp.export_voyageurs_pdf', voyage_id=voyage_id) }}" class="btn btn-outline-light">Impression {{ voyage.nombre_voyageurs }} / <span class="text-light">{{ voyage.total }}</span></a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item" style="background-color: rgba(255, 0, 0, 0) !important; border: none !important;">
+                    <h2 class="accordion-header" id="headingOne">
+                        <div></div>
+                    </h2>
+                    {% if voyage.nombre_voyageurs|int < voyage.total|int %}
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
+                        <style>
+                            label{
+                                color: white !important;
+                            }
+                        </style>
+                        <form action="{{ url_for('voyageur_bp.create_voyageur', voyage_id=voyage_id) }}" method="post" class="row">
+                            <div class="row">
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">ANARANA SY FANAMPINY</label>
+                                    <input type="text" name="nom" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">L & V</label>
+                                    <select name="sexe" class="form-control" required>
+                                        <option value="L">L</option>
+                                        <option value="V">V</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">CIN</label>
+                                    <input type="text" name="cin" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">TEL MPANDEHA</label>
+                                    <input type="text" name="tel_perso" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">TEL FIANANKAVIANA</label>
+                                    <input type="text" name="tel_famille" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">ADIRESY NIAINGÀNA</label>
+                                    <input type="text" name="adresse_depart" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">ADIRESY IVANTANANA</label>
+                                    <input type="text" name="destination" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">MARIPÀNA</label>
+                                    <input type="number" step="0.1" name="temperature" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3 mb-2">
+                                    <label class="form-label fw-bold">SARANDALANA</label>
+                                    <input type="text" name="status" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group text-start my-3">
+                                <button type="submit" class="btn btn-outline-light fw-bold py-2 px-5 text-uppercase">Hampiditra</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
+                        <p class="text-light h5">Toernana feno <span class="text-danger">{{ voyage.nombre_voyageurs}}</span>/{{ voyage.total }}</p>
+                        <p class="text-info"> Tsy afaka manampy intsony</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endblock %}

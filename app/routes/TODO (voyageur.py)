@@ -1,0 +1,311 @@
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+from bson import ObjectId
+from .. import mongo, app
+from ..models.voyageur import Voyageur
+
+voyageur_bp = Blueprint('voyageur_bp', __name__)
+
+# 🟢 Afficher la liste des voyageurs
+@voyageur_bp.route("/", methods=["GET"])
+def list_voyageurs():
+    try:
+        voyageurs = [Voyageur.from_mongo(doc) for doc in mongo.db.voyageurs.find()]
+        return render_template("voyageurs.html", voyageurs=voyageurs)
+    except Exception as e:
+        app.logger.error(f"Erreur lors du chargement des voyageurs : {str(e)}")
+        flash(f"Erreur lors du chargement des voyageurs : {str(e)}", "danger")
+        return render_template("voyageurs.html", voyageurs=[])
+
+# 🟢 Ajouter un voyageur via formulaire
+@voyageur_bp.route("/add", methods=["POST"])
+def create_voyageur():
+    try:
+        nom = request.form.get("nom")
+        cin = request.form.get("cin")
+        sexe = request.form.get("sexe")
+        tel_perso = request.form.get("tel_perso")
+        tel_famille = request.form.get("tel_famille")
+        adresse_depart = request.form.get("adresse_depart")
+        destination = request.form.get("destination")
+        temperature = request.form.get("temperature")
+        status = request.form.get("status")
+        voyage_id = request.form.get("voyage_id")  # 🔹 Nouveau champ
+
+        app.logger.info(f"Données reçues: nom={nom}, cin={cin}, sexe={sexe}, tel_perso={tel_perso}, tel_famille={tel_famille}, adresse_depart={adresse_depart}, destination={destination}, temperature={temperature}, status={status}, voyage_id={voyage_id}")
+
+        if not (nom and cin and sexe and tel_perso and adresse_depart and destination and temperature and status and voyage_id):
+            raise ValueError("Tous les champs obligatoires doivent être remplis.")
+
+        temperature = float(temperature)
+
+        voyageur = Voyageur(nom, cin, sexe, tel_famille, tel_perso, adresse_depart, destination, temperature, status, voyage_id)
+        voyageur_dict = voyageur.to_dict()
+        voyageur_dict.pop("_id", None)
+
+        mongo.db.voyageurs.insert_one(voyageur_dict)
+        app.logger.info("Voyageur ajouté avec succès.")
+        flash("Voyageur ajouté avec succès", "success")
+    except ValueError as ve:
+        app.logger.error(f"Erreur de validation: {str(ve)}")
+        flash(f"Erreur: {str(ve)}", "danger")
+    except Exception as e:
+        app.logger.error(f"Erreur lors de l'ajout du voyageur: {str(e)}")
+        flash(f"Erreur lors de l'ajout du voyageur: {str(e)}", "danger")
+
+    return redirect(url_for("voyageur_bp.list_voyageurs"))
+
+# 🟡 Modifier un voyageur (Formulaire)
+@voyageur_bp.route("/edit/<id>", methods=["GET", "POST"])
+def edit_voyageur(id):
+    try:
+        voyageur_doc = mongo.db.voyageurs.find_one({"_id": ObjectId(id)})
+        if not voyageur_doc:
+            flash("Voyageur introuvable", "warning")
+            return redirect(url_for("voyageur_bp.list_voyageurs"))
+    except Exception as e:
+        app.logger.error(f"ID invalide: {str(e)}")
+        flash("ID invalide", "danger")
+        return redirect(url_for("voyageur_bp.list_voyageurs"))
+
+    voyageur = Voyageur.from_mongo(voyageur_doc)
+
+    if request.method == "POST":
+        try:
+            updated_data = {
+                "nom": request.form.get("nom"),
+                "cin": request.form.get("cin"),
+                "sexe": request.form.get("sexe"),
+                "tel_famille": request.form.get("tel_famille"),
+                "tel_perso": request.form.get("tel_perso"),
+                "adresse_depart": request.form.get("adresse_depart"),
+                "destination": request.form.get("destination"),
+                "temperature": float(request.form.get("temperature")),
+                "status": request.form.get("status"),
+                "voyage_id": request.form.get("voyage_id")  # 🔹 Mise à jour du voyage_id
+            }
+
+            mongo.db.voyageurs.update_one({"_id": ObjectId(id)}, {"$set": updated_data})
+            app.logger.info("Voyageur mis à jour avec succès.")
+            flash("Voyageur mis à jour avec succès", "success")
+            return redirect(url_for("voyageur_bp.list_voyageurs"))
+        except Exception as e:
+            app.logger.error(f"Erreur lors de la mise à jour: {str(e)}")
+            flash(f"Erreur lors de la mise à jour : {str(e)}", "danger")
+
+    return render_template("edit_voyageur.html", voyageur=voyageur)
+
+# 🔴 Supprimer un voyageur
+@voyageur_bp.route("/delete/<id>", methods=["POST"])
+def delete_voyageur(id):
+    try:
+        voyageur_doc = mongo.db.voyageurs.find_one({"_id": ObjectId(id)})
+        if not voyageur_doc:
+            flash("Voyageur introuvable", "warning")
+            return redirect(url_for("voyageur_bp.list_voyageurs"))
+
+        mongo.db.voyageurs.delete_one({"_id": ObjectId(id)})
+        app.logger.info("Voyageur supprimé avec succès.")
+        flash("Voyageur supprimé avec succès", "success")
+    except Exception as e:
+        app.logger.error(f"ID invalide ou erreur de suppression: {str(e)}")
+        flash("ID invalide ou erreur de suppression", "danger")
+
+    return redirect(url_for("voyageur_bp.list_voyageurs"))
+
+
+
+// Template 
+
+{% extends "base.html" %}
+
+{% block title %}Liste des Voyageurs{% endblock %}
+
+{% block content %}
+    
+
+    <!-- Table des voyageurs -->
+    <div class="table-responsive mb-5 pb-5">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Nom</th>
+                    <th>CIN</th>
+                    <th>Sexe</th>
+                    <th>Tel Famille</th>
+                    <th>Tel Perso</th>
+                    <th>Adresse Départ</th>
+                    <th>Destination</th>
+                    <th>Température</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voyageur in voyageurs %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ voyageur.nom }}</td>
+                        <td>{{ voyageur.cin }}</td>
+                        <td>{{ voyageur.sexe }}</td>
+                        <td>{{ voyageur.tel_famille }}</td>
+                        <td>{{ voyageur.tel_perso }}</td>
+                        <td>{{ voyageur.adresse_depart }}</td>
+                        <td>{{ voyageur.destination }}</td>
+                        <td>{{ voyageur.temperature }}°C</td>
+                        <td>{{ voyageur.status }}</td>
+                        <td>
+                            <a href="{{ url_for('voyageur_bp.edit_voyageur', id=voyageur.id) }}" class="btn btn-warning btn-sm mb-1">Modifier</a>
+                            <form action="{{ url_for('voyageur_bp.delete_voyageur', id=voyageur.id) }}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce voyageur ?');">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+
+    
+
+
+    <nav
+        class="navbar navbar-dark bg-primary fixed-bottom"
+    >
+             <div class="container">
+                <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true"
+                    aria-controls="collapseOne"
+                    style="
+                        background-color: white;
+                        color: black !important;    /* Couleur du texte */
+                        border: 2px solid #007bff; /* Bordure bleue */
+                        border-radius: 0.5rem;     /* Bordures arrondies */
+                        padding: 10px 20px;        /* Espacement intérieur */
+                        font-size: 1rem;           /* Taille du texte */
+                        font-weight: 500;          /* Poids de la police */
+                        text-transform: uppercase; /* Texte en majuscules */
+                        transition: all 0.3s ease; /* Transition pour les effets au survol */
+                        box-shadow: none !important; /* Suppression de l'ombre par défaut de Bootstrap */
+                        /* position: fixed;            */
+                        left: 0;
+                        transform: translateY(-50%); /* Centrer précisément */
+                        width: 150px !important;
+                    "
+                >
+                    Formulaire
+                </button>
+             </div> 
+            <div class="container">
+            
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item" style=" background-color: rgba(255, 0, 0, 0) !important; border: none !important;">
+                        <h2 class="accordion-header" id="headingOne">
+                            <div>
+                        
+
+                        </div>
+
+                        </h2>
+                        <div
+                            id="collapseOne"
+                            class="accordion-collapse collapse show"
+                            aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample"
+                            style="background-color: none !important;"
+                        >
+                        <!-- <button
+                            class="accordion-button"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne"
+                            aria-expanded="true"
+                            aria-controls="collapseOne"
+                            style="
+                                background-color: #007bff;  /* Couleur de fond bleu */
+                                color: white !important;    /* Couleur du texte */
+                                border: 2px solid #007bff; /* Bordure bleue */
+                                border-radius: 0.5rem;     /* Bordures arrondies */
+                                padding: 10px 20px;        /* Espacement intérieur */
+                                font-size: 1rem;           /* Taille du texte */
+                                font-weight: 500;          /* Poids de la police */
+                                text-transform: uppercase; /* Texte en majuscules */
+                                transition: all 0.3s ease; /* Transition pour les effets au survol */
+                                box-shadow: none !important; /* Suppression de l'ombre par défaut de Bootstrap */
+                                position: absolute;        /* Positionnement absolu */
+                                top: 0;                    /* Colle le bouton en haut de la div */
+                                left: 10px;                /* Décalage du bouton à gauche (ajustable) */
+                                width: calc(100% - 20px);  /* Largeur du bouton, moins les marges */
+                                z-index: 1;               /* Assurer que le bouton soit au-dessus du contenu */
+                            "
+                        >
+                            Formulaire
+                        </button> -->
+                        <form action="{{ url_for('voyageur_bp.create_voyageur') }}" method="post" class="row">
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Nom</label>
+                                    <input type="text" name="nom" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">CIN</label>
+                                    <input type="text" name="cin" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Sexe</label>
+                                    <select name="sexe" class="form-control" required>
+                                        <option value="Homme">Homme</option>
+                                        <option value="Femme">Femme</option>
+                                    </select>
+                                </div>
+                
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Téléphone Famille</label>
+                                    <input type="text" name="tel_famille" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Téléphone Personnel</label>
+                                    <input type="text" name="tel_perso" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Adresse de Départ</label>
+                                    <input type="text" name="adresse_depart" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Destination</label>
+                                    <input type="text" name="destination" class="form-control" required>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Température</label>
+                                    <input type="number" step="0.1" name="temperature" class="form-control" required>
+                                </div>
+                
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <input type="text" name="status" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button type="submit" class="btn btn-outline-dark mb-3" 
+                                style=" font-weight: 500; 
+                                        padding: 10px 40px;
+                                        margin-top: 2px;
+
+                                ">AJOUTER</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+    </nav>
+    
+{% endblock %}

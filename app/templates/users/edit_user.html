@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="text-center">Modifier l'utilisateur</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="">
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="nom" name="nom" value="{{ user.nom }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="telephone" class="form-label">Téléphone</label>
+            <input type="text" class="form-control" id="telephone" name="telephone" value="{{ user.telephone }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="adresse" class="form-label">Adresse</label>
+            <input type="text" class="form-control" id="adresse" name="adresse" value="{{ user.adresse }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="date_naissance" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control" id="date_naissance" name="date_naissance" value="{{ user.date_naissance }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="role" class="form-label">Rôle</label>
+            <select class="form-select" id="role" name="role" required>
+                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                <option value="agent" {% if user.role == 'agent' %}selected{% endif %}>Agent</option>
+                <option value="superadmin" {% if user.role == 'superadmin' %}selected{% endif %}>Super Admin</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Enregistrer les modifications</button>
+    </form>
+</div>
+{% endblock %}

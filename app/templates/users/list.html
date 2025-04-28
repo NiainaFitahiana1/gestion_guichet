@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    
+    {% if users %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Rôle</th>
+                    <th>Date de naissance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ user.nom }}</td>
+                    <td>{{ user.telephone }}</td>
+                    <td>{{ user.adresse }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.date_naissance }}</td>
+                    <td>
+                        <a href="{{ url_for('auth_bp.edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        <a href="{{ url_for('auth_bp.delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center text-muted">Aucun utilisateur trouvé.</p>
+    {% endif %}
+</div>
+<nav class="navbar navbar-dark bg-primary fixed-bottom">
+    <div class="container">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color: white; color: black !important; border: 2px solid #007bff; border-radius: 0.5rem; padding: 10px 20px; font-size: 1rem; font-weight: 500; text-transform: uppercase; transition: all 0.3s ease; box-shadow: none !important; left: 0; transform: translateY(-50%); width: 150px !important;">
+            Formulaire
+        </button>
+    </div>
+    <div class="container">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item" style="background-color: rgba(255, 0, 0, 0) !important; border: none !important;">
+                <h2 class="accordion-header" id="headingOne">
+                    <div></div>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
+                    <form action="{{ url_for('auth_bp.add_user') }}" method="post" class="row">
+                        <div class="col-4 col-md-4">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" required>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="telephone" class="form-label">Numéro de téléphone</label>
+                            <input type="text" class="form-control" id="telephone" name="telephone" required>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="adresse" class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" required>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="role" class="form-label">Rôle</label>
+                            <select class="form-control" id="role" name="role" required>
+                                <option value="guichetier">Guichetier</option>
+                                <option value="chauffeur">Chauffeur</option>
+                            </select>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="date_naissance" class="form-label">Date de naissance</label>
+                            <input type="date" class="form-control" id="date_naissance" name="date_naissance" required>
+                        </div>
+            
+                        <div class="col-4 col-md-4">
+                            <label for="photo" class="form-label">Photo (optionnel)</label>
+                            <input type="file" class="form-control" id="photo" name="photo">
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <button type="submit" class="btn btn-outline-dark py-2 px-5">Ajouter l'utilisateur</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}

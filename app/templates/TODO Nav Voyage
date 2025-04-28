@@ -1,0 +1,81 @@
+<form action="{{ url_for('voyage_bp.create_voyage') }}" method="POST" class="row">
+                        <style>
+                            label{
+                                color: white !important;
+                            }
+                        </style>
+                            <div class="col-4 col-md-4 position-relative">
+                                <div class="form-group">
+                                    <label for="numero_automobile" class="form-label">FIARA N°</label>
+                                    <input type="text" class="form-control" id="numero_automobile" name="numero_automobile" required autocomplete="off">
+                                    <div id="immatriculation_suggestions" class="list-group rounded-0 position-absolute" style="z-index:1000;"></div>
+                                </div>
+                            
+
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="date_depart" class="form-label">DATY</label>
+                                    <input type="datetime-local" class="form-control" id="date_depart" name="date_depart" required>
+                                </div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        let dateInput = document.getElementById("date_depart");
+                                        let now = new Date();
+                                        let formattedDate = now.toISOString().slice(0, 16);
+                                        dateInput.value = formattedDate;
+                                    });
+                                </script>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="lieu_depart" class="form-label">TOERANA IAINGANA</label>
+                                    <input type="text" class="form-control" id="lieu_depart" value="Fasan'ny Karana" name="lieu_depart" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="cooperative" class="form-label">KOPERATIVA</label>
+                                    <input type="text" class="form-control" id="cooperative" name="cooperative" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="destination" class="form-label">TOERANA ALEHA</label>
+                                    <input type="text" class="form-control" id="destination" name="destination" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="chauffeur" class="form-label">MPAMILY</label>
+                                    <input type="text" class="form-control" id="chauffeur" name="chauffeur" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="total" class="form-label">MPANDEHA ZAKAN'NY FIARA</label>
+                                    <input type="number" class="form-control" id="total" name="total" required>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                
+                            </div>
+                            <div class="col-4 col-md-4" style="position: inherit;">
+                                <div class="form-group">
+                                    <label for="guichetier" class="form-label text-uppercase">Guichetier</label>
+                                    <input type="text" class="form-control" id="guichetier" name="guichetier" value="{{ nommer.nom }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="form-group">
+                                    <label for="frais" class="form-label">Frais (MGA)</label>
+                                    <input type="number" class="form-control" id="frais" name="frais" required>
+                                </div>
+                            </div>
+                        <div class="form-group text-start my-3">
+                            <button type="submit" class="btn btn-outline-light fw-bold py-2 px-5 text-uppercase">Hampiditra Voyage</button>
+                        </div>
+                    </form>

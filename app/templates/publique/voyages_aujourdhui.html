@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  section{
+    height: 100vh !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column !important;
+    align-items: center ;
+    justify-content: center ;
+  }
+</style>
+<section>
+  <div class="container" 
+  >
+
+    {% if voyages %}
+      <div class="row">
+        {% for voyage in voyages %}
+          <div class="col-md-6 col-lg-2 mb-4">
+            <div class="card h-100 shadow-lg rounded-0 border-0 text-center">
+              <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                <h5 class="card-title text-uppercase">{{ voyage.destination }}</h5>
+                <p class="border rounded-pill p-2 border-info d-flex flex-column justify-content-center align-items-center shadow-lg" style="height:100px ; width: 100px; border: 6px solid rgb(70, 209, 255) !important; font-size: large ; font-weight:  bolder;">
+                    {{ voyage.nombre_voyageurs }}/{{ voyage.total }}
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info text-center">
+        Aucun voyage prévu pour aujourd'hui.
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
