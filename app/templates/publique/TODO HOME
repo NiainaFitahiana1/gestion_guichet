@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gare Routière Centrale</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #A52834;
+      --bg-light: #FFFFFF;
+      --text-light: #1E1E1E;
+      --bg-dark: #1E1E1E;
+      --text-dark: #FFFFFF;
+      --blur-bg-light: rgba(255, 255, 255, 0.523);
+      --blur-bg-dark: rgba(30, 30, 30, 0.384);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .btn,
+    .modal-content,
+    .card-img-top {
+      border-radius: 0 !important;
+    }
+
+    .hero {
+      position: relative;
+      background: url("{{ url_for('static', filename='gare.jpg') }}") center/cover no-repeat;
+      color: var(--text-dark);
+      padding: 120px 0;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 30, 30, 0.65);
+      z-index: 1;
+    }
+
+    .hero .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .service-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: #8E1E2C;
+      border-color: #8E1E2C;
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    footer {
+      padding: 30px 0;
+      margin-top: 50px;
+    }
+
+    .navbar {
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .lightmode {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+    .nav-link{
+      font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+      padding: 0 5px !important;
+      padding-top: 3px !important;
+      border-bottom: #1e1e1e00 solid 3px;
+      font-weight: 600 !important;
+    }
+    a.nav-link:hover{
+      border-bottom: #A52834 solid 3px;
+    }
+    
+
+    .darkmode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .navbar.lightmode {
+      background-color: var(--blur-bg-light);
+    }
+
+    .navbar.darkmode {
+      background-color: var(--blur-bg-dark);
+    }
+
+    .navbar-toggler {
+      border: none;
+    }
+
+    .fixed-top {
+      z-index: 1030;
+    }
+
+    .navbar-brand img {
+      height: 50px;
+      margin-right: 8px;
+    }
+
+    .nav-link {
+      transition: color 0.3s ease;
+    }
+
+    .lightmode .nav-link {
+      color: var(--text-light) !important;
+    }
+
+    .darkmode .nav-link {
+      color: var(--text-dark) !important;
+    }
+
+    .lightmode .navbar-brand{
+      color: var(--text-light) !important;
+    }
+
+    .darkmode .navbar-brand{
+      color: var(--text-dark) !important;
+    }
+     .lightmode .navbar-toggler {
+      color: var(--text-light) !important;
+    }
+
+    .darkmode .navbar-toggler {
+      color: var(--text-dark) !important;
+    }
+     .lightmode #modeToggle {
+      color: var(--text-light) !important;
+    }
+
+    .darkmode #modeToggle {
+      color: var(--text-dark) !important;
+    }
+    .card{
+      padding-bottom: -3rem !important;
+    }
+  </style>
+</head>
+
+<body class="lightmode">
+
+  <nav id="mainNavbar" class="navbar navbar-expand-lg fixed-top lightmode">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="#" style="font-size: small;">
+      <img src="{{ url_for('static', filename='log.png') }}" alt="Logo">
+      FI.KO.MA
+    </a>
+    <button class="navbar-toggler rounded-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <i class="bi bi-list"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto text-uppercase text-center">
+        <li class="nav-item"><a class="nav-link" href="#">Tongasoa</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">tsara ho fantarina</a></li>
+        <li class="nav-item"><a class="nav-link" href="#infos">Zotra</a></li>
+        <li class="nav-item me-1"><a class="nav-link" href="#avis">Fifandraisana</a></li>
+        <li class="nav-item d-flex justify-content-center">
+          <button id="modeToggle" class="nav-link btn btn-sm w-full" title="Hanova maody">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+  <section class="hero text-center -pt-5">
+    <div class="container pt-5">
+      <h1>Tongasoa eto amin'ny guichet FI.KO.MA</h1>
+      <p>Fikambanan'ny koperativa iraisan'ny distrikan'Andramasina</p>
+      <a href="#services" class="btn btn-outline-light fw-bold text-uppercase px-4 mt-3">Sarandalana</a>
+    </div>
+  </section>
+
+  <section id="services" class="container my-5">
+    <h4 class="text-center mb-4 fw-bold">Fampahafantarana</h4>
+    <div class="row g-4">
+      <div class="col-md-3 text-center">
+        <div class="service-icon"><i class="bi bi-clock"></i></div>
+        <h4>Ora fiasan'ny kaontera</h4>
+        <p>Misokatra manomboka amin'ny <strong class="text-danger">5 ora sy sasany maraina</strong> hatramin'ny <strong class="text-danger">9 ora alina</strong> isan'andro, anisan'izany ny faran'ny herinandro sy fety ofisialy.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="service-icon"><i class="bi bi-bus-front"></i></div>
+        <h4>Fiaingana isan'andro</h4>
+        <p>Mihoatra ny 50 zotra mandeha isan'andro mankany amin'ireo tanàna sy fokontany manodidina.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="service-icon"><i class="bi bi-ticket-detailed"></i></div>
+        <h4>Fividianana tapakila an-tserasera</h4>
+        <p>Afaka mividy tapakila mivantana ao amin'ny tranonkala na amin'ny findainao amin'ny alalan'ny application izahay.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="service-icon"><i class="bi bi-cup-straw"></i></div>
+        <h4>Sakafo & Fivarotana</h4>
+        <p>Misy trano fisakafoanana, kioska sy fivarotana madinika hanamorana sy hanatsarana ny fiandrasanao.</p>
+      </div>
+    </div>
+
+    <hr>
+  </section>
+
+  <section id="infos" class="container my-5">
+    <h4 class="text-center fw-bold mb-4">Zotra & Sarandalana</h4>
+    <div class="row g-4">
+      <div class="col-md-4 col-sm-6 col-12  mb-2 ">
+        <div class="card text-center border-0 rounded-0" style="border-bottom: #8E1E2C 4px solid !important;">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Andramasina</h5>
+            <h5 class="text-danger">12000 Ar</h5>
+            <!-- <p class="card-text">Ouverture de 5h30 à 21h00 tous les jours, y compris les week-ends et jours fériés.</p> -->
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <hr>
+  </section>
+
+  <section id="avis" class="container my-5">
+    <h4 class="text-center fw-bold mb-4">Fifandraisana</h4>
+    <div class="row g-4">
+      <div class="col-md-4 border-start border-danger border-3">
+        <div class="p-3 rounded">
+          <h6 class="fw-bold mb-4">Birao fasan'karana</h6>
+          <p><i class="text-danger bi bi-phone"></i> +261 33 61 482 48</p>
+          <p><i class="text-danger bi bi-chat"></i> fikoma@gmail.com</p>
+          <p><i class="text-danger bi bi-building"></i> Vavahady fahatelo miditra fasan'karana</p>
+          <!-- <small>- Sarah R.</small> -->
+        </div>
+      </div>
+      <div class="col-md-4 border-start border-danger border-3">
+        <div class="p-3 rounded">
+          <h6 class="fw-bold mb-4">Filohan'ny koperativa</h6>
+          <p><i class="text-danger bi bi-phone"></i> +261 33 61 482 48</p>
+          <small>- Kevin MAROAMBIKA.</small>
+        </div>
+      </div>
+      <div class="col-md-4 border-start border-danger border-3">
+        <div class="p-3 rounded">
+          <h6 class="fw-bold mb-4">Tompon'andraikitry ny famandrian-toerana</h6>
+          <p><i class="text-danger bi bi-phone"></i> +261 33 61 482 48</p>
+          <p><i class="text-danger bi bi-phone"></i> +261 33 61 482 48</p>
+          <p><i class="text-danger bi bi-phone"></i> +261 33 61 482 48</p>
+          <small>- Kevin MAROAMBIKA.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="mainFooter" class="text-center lightmode">
+    <small>&copy; 2025 Gare Routière Centrale. Tous droits réservés.</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const toggleBtn = document.getElementById("modeToggle");
+    const body = document.body;
+    const navbar = document.getElementById("mainNavbar");
+    const footer = document.getElementById("mainFooter");
+    const icon = toggleBtn.querySelector("i");
+
+    toggleBtn.addEventListener("click", () => {
+      body.classList.toggle("darkmode");
+      body.classList.toggle("lightmode");
+      navbar.classList.toggle("darkmode");
+      navbar.classList.toggle("lightmode");
+      footer.classList.toggle("darkmode");
+      footer.classList.toggle("lightmode");
+      icon.classList.toggle("bi-moon-fill");
+      icon.classList.toggle("bi-sun-fill");
+    });
+  </script>
+</body>
+
+</html>

@@ -10,51 +10,7 @@ from ..middleware.decorators import role_required
 
 voyage_bp = Blueprint('voyage_bp', __name__)
 
-@voyage_bp.route("/", methods=["GET"])
-@login_required
-@role_required("guichetier")
-def list_voyages():
-    try:
-        page = int(request.args.get("page", 1))
-        per_page = 1  # une page = un jour de voyages
-
-        all_voyages = list(mongo.db.voyages.find().sort("date_depart", -1))
-
-        grouped = defaultdict(list)
-        for doc in all_voyages:
-            date_obj = (
-                datetime.fromisoformat(doc["date_depart"])
-                if isinstance(doc["date_depart"], str)
-                else doc["date_depart"]
-            )
-            day_key = date_obj.date().isoformat()
-            grouped[day_key].append(Voyage.from_mongo(doc))
-
-        all_days = sorted(grouped.keys(), reverse=True)
-        all_days = all_days[:15]
-        total_pages = len(all_days)
-
-        if page < 1 or page > total_pages:
-            page = 1
-
-        current_day = all_days[page - 1]
-        voyages = grouped[current_day]
-
-        voitures = mongo.db.voitures.find({})
-
-        return render_template(
-            "voyages.html",
-            voyages=voyages,
-            selected_day=current_day,
-            page=page,
-            total_pages=total_pages,
-            nommer=current_user,
-            voitures = voitures,
-        )
-    except Exception as e:
-        flash(f"Erreur lors du chargement des voyages : {str(e)}", "danger")
-        return render_template("voyages.html", voyages=[], page=1, total_pages=1, nommer=current_user)
-        
+      
 # 🟢 Ajouter un voyage via formulaire (GET et POST)
 @voyage_bp.route("/add", methods=["GET", "POST"])
 @login_required
@@ -139,17 +95,17 @@ def change_status(id):
         voyage_doc = mongo.db.voyages.find_one({"_id": ObjectId(id)})
         if not voyage_doc:
             flash("Voyage introuvable", "warning")
-            return redirect(url_for("voyage_bp.list_voyages"))
+            return redirect(url_for("voyage_bp.dynamic_add"))
     except Exception:
         flash("ID invalide", "danger")
-        return redirect(url_for("voyage_bp.list_voyages"))
+        return redirect(url_for("voyage_bp.dynamic_add"))
 
     if request.method == "POST":
         try:
             nouveau_statut = request.form.get("statut_voyage")
             if not nouveau_statut:
                 flash("Le statut ne peut pas être vide", "warning")
-                return redirect(url_for("voyage_bp.list_voyages"))
+                return redirect(url_for("voyage_bp.dynamic_add"))
 
             mongo.db.voyages.update_one(
                 {"_id": ObjectId(id)},
@@ -159,9 +115,8 @@ def change_status(id):
         except Exception as e:
             flash(f"Erreur lors de la mise à jour du statut : {str(e)}", "danger")
 
-    return redirect(url_for("voyage_bp.list_voyages"))
+    return redirect(url_for("voyage_bp.dynamic_add"))
 
-# 🔴 Supprimer un voyage
 @voyage_bp.route("/delete/<id>", methods=["POST"])
 @login_required
 @role_required("guichetier")
@@ -170,14 +125,14 @@ def delete_voyage(id):
         voyage_doc = mongo.db.voyages.find_one({"_id": ObjectId(id)})
         if not voyage_doc:
             flash("Voyage introuvable", "warning")
-            return redirect(url_for("voyage_bp.list_voyages"))
+            return redirect(url_for("voyage_bp.dynamic_add"))
         
         mongo.db.voyages.delete_one({"_id": ObjectId(id)})
         flash("Voyage supprimé avec succès", "success")
     except Exception:
         flash("ID invalide ou erreur de suppression", "danger")
     
-    return redirect(url_for("voyage_bp.list_voyages"))
+    return redirect(url_for("voyage_bp.dynamic_add"))
 
 # 🟢 Afficher la liste des voyageurs pour un voyage spécifique
 @voyage_bp.route("/<voyage_id>/voyageurs", methods=["GET"])
@@ -211,7 +166,7 @@ def autocomplete_immatriculation():
     return jsonify(suggestions)
 
 
-@voyage_bp.route("/dynamic-add", methods=["GET"])
+@voyage_bp.route("/", methods=["GET"])
 def dynamic_add():
     destis = mongo.db.destis.find({})
     voitures = mongo.db.voitures.find({})

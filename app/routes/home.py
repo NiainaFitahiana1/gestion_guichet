@@ -7,12 +7,18 @@ from datetime import datetime
 from ..models.voiture import Voiture
 from ..models.user import User
 from ..models.desti import Desti
+from ..models.voyage import Voyage
 from .. import mongo
+
+from ..middleware.decorators import role_required
 
 import random
 home_bp = Blueprint('home_bp', __name__)
 
 @home_bp.route("/admin")
+@login_required
+@role_required("superadmin")
+
 def admin():
     nb_clients = mongo.db.clients.count_documents({})
     nb_users = mongo.db.users.count_documents({})
@@ -89,6 +95,10 @@ def admin():
                            )
 
 @home_bp.route("/users")
+@login_required
+@role_required("superadmin")
+
+
 def users():
 
     nb_guichetiers = mongo.db.users.count_documents({"role":"guichetier"})
@@ -110,6 +120,10 @@ def users():
                            )
 
 @home_bp.route("/ajouter-guichetier", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def ajouter_guichetier():
     nom = request.form['nom']
     role = request.form['role'].lower()
@@ -145,6 +159,10 @@ def ajouter_guichetier():
     return redirect(url_for('home_bp.users'))
 
 @home_bp.route("/edit-guichetiers/<id>", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def modifier_guichetier(id):
     mongo.db.users.update_one(
         {"_id": ObjectId(id)},
@@ -161,6 +179,10 @@ def modifier_guichetier(id):
     return redirect(url_for('home_bp.users'))
 
 @home_bp.route("/delete-guichetier/<id>", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def supprimer_guichetier(id):
     mongo.db.users.delete_one({"_id": ObjectId(id)})
     flash("Personnel supprimé avec succès", "success")
@@ -169,6 +191,10 @@ def supprimer_guichetier(id):
 
 
 @home_bp.route("/ajouter-voiture", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def ajouter_voiture():
     immatriculation = request.form['immatriculation']
     cooperative = request.form['cooperative']
@@ -199,6 +225,10 @@ def ajouter_voiture():
     return redirect(url_for('home_bp.users'))
 
 @home_bp.route("/modifier-voiture/<id>", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def modifier_voiture(id):
     voiture = mongo.db.voitures.find_one({"_id": ObjectId(id)})
     if not voiture:
@@ -222,6 +252,10 @@ def modifier_voiture(id):
     return redirect(url_for("home_bp.users"))
 
 @home_bp.route("/supprimer-voiture/<id>")
+@login_required
+@role_required("superadmin")
+
+
 def supprimer_voiture(id):
     voiture = mongo.db.voitures.find_one({"_id": ObjectId(id)})
     if not voiture:
@@ -232,6 +266,10 @@ def supprimer_voiture(id):
     return redirect(url_for("home_bp.users"))
 
 @home_bp.route("/gestion-tarifs")
+@login_required
+@role_required("superadmin")
+
+
 def gestion_tarifs():
 
     destis = list(mongo.db.destis.find())
@@ -243,6 +281,10 @@ def gestion_tarifs():
                            )
 
 @home_bp.route("/ajouter-desti", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def ajouter_desti():
     destination = request.form.get("destination")
     frais = request.form.get("frais")
@@ -260,6 +302,10 @@ def ajouter_desti():
 
 
 @home_bp.route("/modifier-desti/<desti_id>", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def modifier_desti(desti_id):
     destination = request.form.get("destination")
     frais = request.form.get("frais")
@@ -279,6 +325,10 @@ def modifier_desti(desti_id):
     return redirect(url_for("home_bp.gestion_tarifs"))
 
 @home_bp.route("/supprimer-desti/<desti_id>", methods=["POST"])
+@login_required
+@role_required("superadmin")
+
+
 def supprimer_desti(desti_id):
     try:
         mongo.db.destis.delete_one({"_id": ObjectId(desti_id)})
@@ -290,25 +340,41 @@ def supprimer_desti(desti_id):
 
 
 @home_bp.route("/param")
+@login_required
+@role_required("superadmin")
 def param():
-	logs_cursor = mongo.db.logs.find().sort("date", -1)
-	logs = list(logs_cursor)
+    page = int(request.args.get("page", 1))
+    per_page = 10
 
-	grouped_logs = {}
-	for log in logs:
-		date = log.get("date", "Date inconnue")
-		if date not in grouped_logs:
-			grouped_logs[date] = []
-		grouped_logs[date].append(log)
+    try:
+        total_logs = mongo.db.logs.count_documents({})
+        total_pages = (total_logs + per_page - 1) // per_page
 
-	return render_template("admin/param.html",
-		user=current_user,
-		grouped_logs=grouped_logs)
+        logs_cursor = (
+            mongo.db.logs.find()
+            .sort("date", -1)
+            .skip((page - 1) * per_page)
+            .limit(per_page)
+        )
+        logs = list(logs_cursor)
 
+        return render_template(
+            "admin/param.html",
+            user=current_user,
+            logs=logs,
+            page=page,
+            total_pages=total_pages
+        )
+
+    except Exception as e:
+        flash(f"Erreur lors du chargement des connexions : {str(e)}", "danger")
+        return redirect(url_for("home_bp.admin"))
 
 
 @home_bp.route("/edit-superadmin", methods=["POST"])
 @login_required
+@role_required("superadmin")
+
 def edit_admin():
     user = current_user
 
@@ -342,3 +408,28 @@ def edit_admin():
 
     flash("Profil mis à jour avec succès", "success")
     return redirect(url_for("home_bp.param"))
+
+
+@home_bp.route("/voyages", methods=["GET"])
+@login_required
+@role_required("superadmin")
+def lister_voyage():
+    statut = request.args.get("statut", "encours")
+    page = int(request.args.get("page", 1))
+    per_page = 10
+
+    try:
+        filtre = {"statut_voyage": statut}
+        total_voyages = mongo.db.voyages.count_documents(filtre)
+        voyages_cursor = mongo.db.voyages.find(filtre).sort("date_depart", -1).skip((page - 1) * per_page).limit(per_page)
+        voyages = [Voyage.from_mongo(doc) for doc in voyages_cursor]
+        total_pages = (total_voyages + per_page - 1) // per_page
+
+        # Récupération dynamique des statuts distincts
+        statuts_disponibles = mongo.db.voyages.distinct("statut_voyage")
+
+        return render_template("admin/voyages.html", voyages=voyages, statut=statut, page=page, total_pages=total_pages, statuts=statuts_disponibles)
+
+    except Exception as e:
+        flash(f"Erreur lors du chargement des voyages : {str(e)}", "danger")
+        return render_template("admin/voyages.html", voyages=[], statut=statut, page=1, total_pages=1, statuts=[])

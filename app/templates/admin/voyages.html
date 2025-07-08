@@ -1,0 +1,112 @@
+{% extends 'admin/base.html' %}
+
+
+{% block content %}
+<style>
+    .btn{
+        border-radius: 0px  !important;
+    }
+</style>
+<div class="container-fluid mt-3">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="my-4">
+        <ol class="breadcrumb bg-light p-3 shadow-sm rounded-0">
+            <li class="breadcrumb-item text-dark">
+                <a href="{{ url_for('home_bp.admin') }}" class="text-decoration-none text-dark">
+                    <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="bi bi-bus-front me-1"></i> Gestion des voyages
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Boutons de statuts -->
+    <div class="mb-3 d-flex flex-wrap gap-2">
+        <a href="{{ url_for('home_bp.lister_voyage') }}" class="btn btn-dark border-0 btn-sm {% if not statut %}active{% endif %}">
+            Tous
+        </a>
+        {% for s in statuts %}
+        <a href="{{ url_for('home_bp.lister_voyage', statut=s) }}" class="btn btn-dark border-0 btn-sm {% if s == statut %}active{% endif %}">
+            {{ s|capitalize }}
+        </a>
+        {% endfor %}
+    </div>
+    <nav aria-label="Pagination" class="my-4">
+        <ul class="pagination justify-content-end">
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link border-0 text-dark rounded-0 shadow-sm"
+                href="{{ url_for('home_bp.lister_voyage', statut=statut, page=page-1) }}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link border-0 
+                        {% if p == page %}bg-dark text-white{% else %}text-dark{% endif %} 
+                        rounded-0 shadow-sm mx-1"
+                style="min-width: 40px; text-align: center;"
+                href="{{ url_for('home_bp.lister_voyage', statut=statut, page=p) }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page < total_pages %}
+            <li class="page-item">
+                <a class="page-link border-0 text-dark rounded-0 shadow-sm"
+                href="{{ url_for('home_bp.lister_voyage', statut=statut, page=page+1) }}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Table des voyages -->
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Coopérative</th>
+                    <th>Départ</th>
+                    <th>Destination</th>
+                    <th>Date départ</th>
+                    <th>Chauffeur</th>
+                    <th>Téléphone</th>
+                    <th>Statut</th>
+                    <th>--</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voyage in voyages %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ voyage.cooperative }}</td>
+                    <td>{{ voyage.lieu_depart }}</td>
+                    <td>{{ voyage.destination }}</td>
+                    <td>{{ voyage.date_depart }}</td>
+                    <td>{{ voyage.chauffeur }}</td>
+                    <td>{{ voyage.telephone_chauffeur }}</td>
+                    <td>
+                        <span class="badge bg-info text-dark">{{ voyage.statut_voyage }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('voyageur_bp.export_voyageurs_pdf', voyage_id=voyage_id) }}" class="btn btn-outline-dark px-2"> <i class="bi bi-file-pdf"></i> Manifold</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">Aucun voyage disponible pour ce statut.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

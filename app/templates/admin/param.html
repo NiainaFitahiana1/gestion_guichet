@@ -38,7 +38,21 @@
         transition: all 0.2s ease-in-out;
     }
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formatter = new Intl.DateTimeFormat('fr-FR', options);
 
+    document.querySelectorAll(".date-fr").forEach(el => {
+        const rawDate = el.dataset.date;
+        if (rawDate) {
+            const dateObj = new Date(rawDate);
+            const formatted = formatter.format(dateObj);
+            el.textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
+    });
+});
+</script>
 <div class="container-fluid">
 
     <!-- Breadcrumb -->
@@ -150,57 +164,83 @@
         </div>
         <hr class="my-4">
         <div class="col-12 col-xl-12">
-            <p class="h6 py-2">Liste des connexions</p>
-            {% for date, logs in grouped_logs.items() %}
-		<div class="my-4">
-            <h5 class="fw-semibold text-dark date-fr" data-date="{{ date }}"> 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                    const formatter = new Intl.DateTimeFormat('fr-FR', options);
-            
-                    document.querySelectorAll(".date-fr").forEach(el => {
-                        const rawDate = el.dataset.date;
-                        if (rawDate) {
-                            const dateObj = new Date(rawDate);
-                            const formatted = formatter.format(dateObj);
-                            el.textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1); // Capitaliser
-                        }
-                    });
-                });
-            </script>
-            </h5>
-			<div class="table-responsive rounded-0 shadow-sm border">
-				<table class="table table-hover text-center mb-0 p-2" style="font-size: small !important;">
-					<thead class="table-secondary">
-						<tr>
-							<th scope="col">Date</th>
-							<th scope="col">Type personnel</th>
-							<th scope="col">Nom</th>
-							<th scope="col">Lieu</th>
-							<th scope="col">Début connexion</th>
-							<th scope="col">Fin</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for log in logs %}
-						<tr>
-							<td>{{ log.date }}</td>
-							<td>{% if log.compte=="superadmin"%}<span class="bg-warning px-2 py-1 text-uppercase fw-semibold">ADMIN</span>{% else %} <span class="bg-success  px-2 text-light py-1 text-uppercase" style="font-size: small !important;">{{ log.compte }}</span> {% endif %}</td>
-							<td>{{ log.compte2 }}</td>
-							<td>{{ log.lieu }}</td>
-							<td>{{ log.debut_connexion }}</td>
-							<td>{% if log.fin_connexion==None %}<span class="text-danger px-2 fw-semibold">Actif</span>{% else %} <span class="text-info">{{log.fin_connexion}} {% endif %}</span> </td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	{% else %}
-		<p class="text-center text-muted">Aucune donnée disponible.</p>
-	{% endfor %}
+    <p class="h5 py-2">Liste des connexions</p>
+
+    {% if logs %}
+     <nav aria-label="Pagination" class="my-4">
+            <ul class="pagination justify-content-end">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link border-0 text-dark rounded-0 shadow-sm" href="{{ url_for('home_bp.param', page=page-1) }}">
+                        <i class="bi bi-chevron-left"></i> 
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link border-0 {% if p == page %}bg-dark text-white{% else %}text-dark{% endif %} rounded-0 shadow-sm mx-1"
+                       style="min-width: 40px; text-align: center;"
+                       href="{{ url_for('home_bp.param', page=p) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+
+                {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link border-0 text-dark rounded-0 shadow-sm" href="{{ url_for('home_bp.param', page=page+1) }}">
+                         <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="table-responsive shadow-sm border">
+            <table class="table table-hover text-center mb-0" style="font-size: small !important;">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type personnel</th>
+                        <th>Nom</th>
+                        <th>Lieu</th>
+                        <th>Début connexion</th>
+                        <th>Fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="date-fr" data-date="{{ log.date }}"></td>
+                        <td>
+                            {% if log.compte == "superadmin" %}
+                            <span class="bg-warning px-2 py-1 text-uppercase fw-semibold">ADMIN</span>
+                            {% else %}
+                            <span class="bg-success text-light px-2 py-1 text-uppercase">{{ log.compte }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.compte2 }}</td>
+                        <td>{{ log.lieu }}</td>
+                        <td>{{ log.debut_connexion }}</td>
+                        <td>
+                            {% if log.fin_connexion %}
+                            <span class="text-info">{{ log.fin_connexion }}</span>
+                            {% else %}
+                            <span class="text-danger px-2 fw-semibold">Actif</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+        <!-- Pagination -->
+       
+
+    {% else %}
+        <p class="text-center text-muted">Aucune connexion enregistrée.</p>
+    {% endif %}
+    </div>
+
         
     </div>
 </div>

@@ -41,7 +41,7 @@ def login():
 				if user_data.get("role") == "superadmin":
 					return redirect(url_for("home_bp.admin"))
 				elif user_data.get("role") == "guichetier":
-					return redirect(url_for("voyage_bp.list_voyages"))
+					return redirect(url_for("voyage_bp.dynamic_add"))
 
 				return render_template("auth/login.html")
 
@@ -59,7 +59,7 @@ def login():
 def logout():
 	try:
 		last_log = mongo.db.logs.find_one(
-			{"compte2": current_user.nom},  # car le nom est stocké dans "compte2"
+			{"compte2": current_user.nom}, 
 			sort=[("_id", -1)]
 		)
 

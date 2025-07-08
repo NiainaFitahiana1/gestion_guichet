@@ -79,15 +79,44 @@ def profile():
 @login_required
 def list_clients():
     try:
-        # Récupérer tous les documents de la collection clients
-        client_docs = mongo.db.clients.find()
-        # Transformer chaque document en instance de Client
+        page = int(request.args.get("page", 1))
+        per_page = 10
+        search_query = request.args.get("q", "").strip()
+
+        query_filter = {}
+
+        # Si une recherche est faite
+        if search_query:
+            query_filter = {
+                "$or": [
+                    {"nom": {"$regex": search_query, "$options": "i"}},
+                    {"cin": {"$regex": search_query, "$options": "i"}},
+                    {"tel_perso": {"$regex": search_query, "$options": "i"}},
+                    {"sexe": {"$regex": search_query, "$options": "i"}}
+                ]
+            }
+
+        total_clients = mongo.db.clients.count_documents(query_filter)
+        total_pages = (total_clients + per_page - 1) // per_page
+
+        client_docs = (
+            mongo.db.clients.find(query_filter)
+            .skip((page - 1) * per_page)
+            .limit(per_page)
+        )
+
         clients = [Client.from_mongo(doc) for doc in client_docs]
 
-        return render_template("client/list.html", clients=clients)
+        return render_template(
+            "client/list.html",
+            clients=clients,
+            page=page,
+            total_pages=total_pages,
+            search_query=search_query
+        )
     except Exception as e:
         flash(f"Erreur lors du chargement des clients : {str(e)}", "danger")
-        return redirect(url_for("dashboard_bp.index"))
+        return redirect(url_for("dashboard.index"))
 
 @dashboard_bp.route("/client/<cin>/activites")
 @login_required

@@ -168,7 +168,7 @@
                 TAKELAKA
             </button>
             <div class="d-flex items-center">
-                <a href="{{ url_for('voyageur_bp.export_voyageurs_pdf', voyage_id=voyage_id) }}" class="btn btn-outline-light">Impression {{ voyage.nombre_voyageurs }} / <span class="text-light">{{ voyage.total }}</span></a>
+                <a href="{{ url_for('voyageur_bp.export_voyageurs_pdf', voyage_id=voyage_id) }}" class="btn btn-outline-light">Impression {{ voyage.nombre_voyageurs }} / <span>{{ voyage.total }}</span></a>
             </div>
         </div>
         <div class="container">
@@ -178,7 +178,7 @@
                         <div></div>
                     </h2>
                     {% if voyage.nombre_voyageurs|int < voyage.total|int %}
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
+                    <div id="collapseOne" class="accordion-collapse collapse close" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: none !important;">
                         <style>
                             label{
                                 color: white !important;

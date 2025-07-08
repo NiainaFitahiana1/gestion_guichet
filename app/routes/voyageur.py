@@ -142,8 +142,9 @@ def delete_voyageur(voyage_id, voyageur_id):
 
 
 @voyageur_bp.route('/list/<voyage_id>/pdf', methods=['GET'])
-@login_required
-@role_required("guichetier")
+# @login_required
+# @role_required("guichetier")
+# @role_required("superadmin")
 def export_voyageurs_pdf(voyage_id):
     try:
         voyageurs = mongo.db.voyageurs.find({"voyage_id": ObjectId(voyage_id)})

@@ -5,41 +5,48 @@
 <div class="container-fluid">
 
     <!-- Breadcrumb Navigation -->
-    <nav aria-label="breadcrumb" class="my-3">
-        <ol class="breadcrumb bg-light p-2 shadow-sm">
-            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="#">Voyageurs enregistrés</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Activités</li>
+    <nav aria-label="breadcrumb" class="my-4">
+        <ol class="breadcrumb bg-light p-3 shadow-sm rounded-0">
+            <li class="breadcrumb-item text-dark">
+                <a href="{{ url_for('home_bp.admin') }}" class="text-decoration-none text-dark">
+                    <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
+                </a>
+            </li>
+            <li class="breadcrumb-item text-dark">
+                <a href="{{ url_for('dashboard.list_clients') }}" class="text-decoration-none text-dark">
+                    <i class="bi bi-person-check me-1"></i> Liste clients enregistré
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des personnels</li>
         </ol>
     </nav>
 
     <!-- Page Title -->
     <div class="my-4">
-        <h3>Activités de {{ client.nom }} <small class="text-muted">(CIN : {{ client.cin }})</small></h3>
+        <h3> {{ client.nom }} <small class="text-muted">(CIN : {{ client.cin }})</small></h3>
     </div>
 
     <!-- Informations personnelles -->
     <div class="mb-4 p-3 bg-white shadow-sm">
-        <h5 class="mb-3">Informations personnelles</h5>
+        <h5 class="mb-3">MOMBAMONBA</h5>
         <ul class="list-group list-group-flush">
-            <li class="list-group-item"><strong>Sexe :</strong> {{ client.sexe }}</li>
-            <li class="list-group-item"><strong>Téléphone :</strong> {{ client.tel_perso }}</li>
+            <li class="list-group-item"><strong>L&V :</strong> {{ client.sexe }}</li>
+            <li class="list-group-item"><strong>TEL :</strong> {{ client.tel_perso }}</li>
         </ul>
     </div>
 
     <!-- Historique des voyages -->
     <div class="mb-4 p-3 bg-white shadow-sm">
-        <h5 class="mb-3">Historique des voyages</h5>
+        <h5 class="mb-3">DIA NALEHANY</h5>
 
         {% if voyages %}
         <div class="table-responsive">
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th>Départ</th>
-                        <th>Destination</th>
-                        <th>Date Départ</th>
-                        <th>Date Arrivée</th>
+                        <th>NIALA TAO</th>
+                        <th>NANKANY</th>
+                        <th>DATY</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,7 +55,7 @@
                         <td>{{ voyage.lieu_depart }}</td>
                         <td>{{ voyage.destination }}</td>
                         <td>{{ voyage.date_depart }}</td>
-                        <td>{{ voyage.date_arrivee }}</td>
+                        <!-- <td>{{ voyage.date_arrivee }}</td> -->
                     </tr>
                     {% endfor %}
                 </tbody>

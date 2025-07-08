@@ -22,3 +22,7 @@ def voyages_aujourdhui():
     except Exception as e:
         flash(f"Erreur lors du chargement des voyages : {str(e)}", "danger")
         return render_template("publique/voyages_aujourdhui.html", voyages=[])
+
+@public_bp.route("/vitrine")
+def client():
+    return render_template("publique/home.html")

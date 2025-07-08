@@ -1,0 +1,157 @@
+@font-face {
+    font-family: "Poppins";
+    src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --primary: #0A84FF;
+    --dark: #0C1B33;
+    --body: #5A6A85;
+    --border: rgba(255, 255, 255, 0.1);
+    --background: #F4F7FA;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    color: var(--body);
+    line-height: 1.7;
+    background-color: var(--background);
+}
+.btn,.card,.modal-content, input , textarea{
+  border-radius: 1px !important;
+}
+/* .section-min-height {
+    min-height: 100vh;
+  }
+
+  @media (min-width: 768px) {
+    .section-min-height {
+      min-height: 90vh;
+    }
+  } */
+  #services{
+    padding: 120px 0px !important;
+   }
+   .section-min-height {
+    padding: 200px 12px !important;
+   }
+
+  .hero-section {
+    background-color: var(--dark);
+  }
+
+  .btn-outline-light {
+    border-color: #fff;
+    color: #fff;
+  }
+
+  .btn-outline-light:hover {
+    background-color: #fff;
+    color: var(--dark);
+  }
+
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+  }
+
+  .d-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-image-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .carousel-image {
+    object-fit: cover;
+    object-position: top;
+    max-height: 350px;
+    width: 100%;
+  }
+  .carousel-item:hover .carousel-image {
+    filter: blur(3px) brightness(0.7);
+  }
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+  }
+  
+  .carousel-caption-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+    color: #fff;
+    padding: 1rem;
+  }
+  
+  .carousel-caption-center h5 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .carousel-caption-center p {
+    font-size: 1rem;
+  }
+  
+  #chatMessages div {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  
+  .text-primary {
+    background-color: #e9f5ff;
+  }
+  
+  .text-end {
+    background-color: #dee2e6;
+  }
+  
+    .mega-footer {
+      background-color: var(--primary-color);
+      padding: 60px 0;
+      color: var(--light-color);
+    }
+
+    .mega-footer a {
+      color: var(--light-color);
+      text-decoration: none;
+    }
+
+    .mega-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--grey-color);
+      padding-top: 10px;
+      padding-bottom: 20px;
+      margin-top: 40px;
+    }
+    .footer-link{
+      color: #0C1B33 !important;
+      text-decoration: none !important;
+      font-size: medium !important;
+    }
+    .footer-link:hover{
+      text-decoration:  underline !important;
+    }
