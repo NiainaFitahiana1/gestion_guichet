@@ -1,21 +1,22 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from flask_login import LoginManager
 from .config import Config
 from .models.user import User
 from bson import ObjectId
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 mongo = PyMongo(app)
+mail = Mail(app)
 
 CORS(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 login_manager.login_view = "auth_bp.login"
 
 @login_manager.user_loader
@@ -45,6 +46,15 @@ app.register_blueprint(public_bp, url_prefix="/public")
 
 from .routes.guichetier import guichet_bp
 app.register_blueprint(guichet_bp, url_prefix="/guichetier")
+
+# --- Gestion des erreurs ---
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template("500.html"), 500
 
 def create_app():
     return app

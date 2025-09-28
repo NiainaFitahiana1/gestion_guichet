@@ -167,6 +167,7 @@ def autocomplete_immatriculation():
 
 
 @voyage_bp.route("/", methods=["GET"])
+@login_required
 def dynamic_add():
     destis = mongo.db.destis.find({})
     voitures = mongo.db.voitures.find({})
@@ -189,6 +190,72 @@ def dynamic_add():
         voyages=voyages,
         nommer=current_user,
     )
+
+@voyage_bp.route("/home",methods=["GET"])
+def go_home():
+    return render_template(
+        "publique/home.html",
+    )
+@voyage_bp.route("/inscrit_compan", methods=["POST"])
+@login_required
+def send_request():
+    try:
+        # Récupérer tous les champs du formulaire
+        company_name = request.form.get("companyName")
+        email = request.form.get("companyEmail")
+        phone = request.form.get("companyPhone")
+        address = request.form.get("companyAddress")
+        city = request.form.get("companyCity")
+        postal_code = request.form.get("companyPostal")
+        country = request.form.get("companyCountry")
+        service_type = request.form.get("serviceType")
+        service_description = request.form.get("serviceDescription")
+        additional_info = request.form.get("additionalInfo")
+
+        # Vérifier que les champs requis sont remplis
+        required_fields = [company_name, email, phone, address, city, postal_code, country, service_type, service_description]
+        if not all(required_fields):
+            flash("Veuillez remplir tous les champs obligatoires (*) !", "danger")
+            return redirect(url_for("voyage_bp.go_home"))
+
+        # Préparer l'email
+        msg = Message(
+            subject="Confirmation de réception de votre formulaire",
+            sender="no-reply@votresite.com",
+            recipients=[email]
+        )
+        msg.body = f"""
+Bonjour {company_name},
+
+Nous avons bien reçu les informations de votre compagnie.
+
+Notre équipe examinera vos informations et votre compte sera créé dès validation.
+
+Résumé des informations envoyées :
+- Nom : {company_name}
+- Email : {email}
+- Téléphone : {phone}
+- Adresse : {address}, {city}, {postal_code}, {country}
+- Type de services : {service_type}
+- Description : {service_description}
+- Informations supplémentaires : {additional_info}
+
+Merci pour votre confiance !
+"""
+
+        # Envoyer le mail
+        mail.send(msg)
+
+        flash("Votre formulaire a été envoyé avec succès. Un email de confirmation vous a été envoyé.", "success")
+        return redirect(url_for("voyage_bp.go_home"))
+
+    except Exception as e:
+        print(e)
+        flash("Une erreur est survenue lors de l'envoi du formulaire. Veuillez réessayer.", "danger")
+        return redirect(url_for("voyage_bp.go_home"))
+
+
+
 
 
 @voyage_bp.route("/dynamic-create", methods=["POST"])
